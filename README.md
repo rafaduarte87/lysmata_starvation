@@ -102,7 +102,7 @@ This dataset contains four spreadsheets. The first spreadsheet shows the total p
 * size: the size of the larva or post-larva (in mm)
 * time: the number of days after hatching for the metamorphosis to post-larvae or for the maintenance as zoea 9
 
-### SCRIPTS
+### SCRIPT
 
 * #### script_lysmata_starvation.R
 
