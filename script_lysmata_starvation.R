@@ -18,7 +18,7 @@ library(pairwiseAdonis)
 # Experiment 1 - biomarkers
 
 data_experiment_1 <-
-  read_excel("dataset_paper_final.xlsx", sheet = 1,
+  read_excel("lysmata_starvation_dataset.xlsx", sheet = 1,
              range = "A1:M151", na = "NA") |> 
   mutate(food = factor(food),
          time = factor(time))
@@ -37,7 +37,7 @@ data_experiment_1_edited <-
 # Experiment 2 - biomarkers
 
 data_experiment_2 <-
-  read_excel("dataset_paper_final.xlsx", sheet = 2,
+  read_excel("lysmata_starvation_dataset.xlsx", sheet = 2,
              range = "A1:M181", na = "NA") |> 
   mutate(stage = factor(stage,
                         levels = c("early_pl", "late_pl", "z9")),
@@ -51,7 +51,7 @@ data_experiment_2$food_stage <-
 # Pooled data - biomarkers
 
 data_nmds <-
-  read_excel("dataset_paper_final.xlsx", sheet = 3,
+  read_excel("lysmata_starvation_dataset.xlsx", sheet = 3,
              range = "A1:M331", na = "NA") |> 
   mutate(stage_1 = factor(stage_1,
                         levels = c("z2", "z9", "early_pl", "late_pl")),
@@ -68,7 +68,7 @@ data_nmds_edited <-
 # Experiment 2 - size and time of metamorphosis
 
 data_size_time <- 
-  read_excel("dataset_paper_final.xlsx", sheet = 4,
+  read_excel("lysmata_starvation_dataset.xlsx", sheet = 4,
               range = "A1:F181", na = "NA") |> 
   mutate(stage = factor(stage,
                         levels = c("early_pl", "late_pl", "z9")),
@@ -170,7 +170,7 @@ graph_nmds_biomarkers_d <-
 
 # saving the graph
 
-ggsave("Biomarkers nMDS.png", graph_nmds_biomarkers_d,
+ggsave("Figure 2.png", graph_nmds_biomarkers_d,
        height = 22.5, width = 15, units = "cm", dpi = 600)
 
 ## PERMANOVA -------------------------------------------------------------------
@@ -362,8 +362,6 @@ pairs(emmeans(model_protein_1, "time"))
 
 pairs(emmeans(model_protein_1, "food"))
 
-pairs(emmeans(model_protein_1, "time", by = "food"))
-
 data_experiment_1_edited |> 
   group_by(food) |> 
   summarise(mean_tp = mean(total_protein_g))
@@ -382,8 +380,6 @@ check_heteroscedasticity(model_gst_1)
 anova(model_gst_1)
 
 pairs(emmeans(model_gst_1, "time"))
-
-pairs(emmeans(model_gst_1, "time", by = "food"))
 
 # SOD
 
@@ -418,8 +414,6 @@ anova(model_cat_1)
 pairs(emmeans(model_cat_1, "time"))
 
 pairs(emmeans(model_cat_1, "food"))
-
-pairs(emmeans(model_cat_1, "time", by = "food"))
 
 data_experiment_1_edited |> 
   group_by(food) |> 
@@ -559,52 +553,7 @@ pairs(emmeans(model_tac_2, "stage"))
 
 #### TP (Total Protein) --------------------------------------------------------
 
-# food by time
-
 graph_tp_1_a <-
-  ggplot(data_experiment_1_edited,
-         aes(x = time, y = total_protein_g, fill = food)) +
-  geom_boxplot(outlier.shape = 21, alpha = 0.5, width = 0.2,
-               position = position_dodge(0.75)) +
-  geom_violin(width = 0.8, alpha = 0.25, show.legend = FALSE,
-              position = position_dodge(0.75)) +
-  labs(x = "**Time**", 
-       y = "**TP (mg of total protein / g wet weight)**",
-       fill = "**Treatment**")
-
-graph_tp_1_b <-
-  graph_tp_1_a +
-  scale_x_discrete(labels = c("12h", "24h", "48h")) +
-  scale_y_continuous(breaks = seq(8, 24, by = 4),
-                     limits = c(8, 26.5)) +
-  scale_fill_manual(labels = c("Fed", "Starved"),
-                    values = c("#336699", "#FF0000"))
-
-graph_tp_1_c <-
-  graph_tp_1_b +
-  theme_bw() +
-  theme(axis.text.x = element_text(colour = "black", size = 10, hjust = 0.5),
-        axis.text.y = element_text(colour = "black", size = 10),
-        axis.title.x = element_markdown(size = 12, 
-                       margin = margin(t = 10, r = 20, b = 10, l = 20)),
-        axis.title.y = element_markdown(size = 12, 
-                       margin = margin(t = 10, r = 10, b = 10, l = 10)),
-        legend.position = "inside",
-        legend.position.inside = c(0.22, 0.89),
-        legend.title = element_markdown(size = 10),
-        legend.text = element_text(size = 8),
-        legend.spacing.x = unit(0.25, "cm"),
-        legend.key.size = unit(0.5, "cm"),
-        legend.background = element_rect(fill = "transparent"),
-        panel.border = element_rect(linewidth = 1, linetype = "solid"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()) +
-  guides(fill = guide_legend(
-    byrow = TRUE, nrow = 1))
-
-# time by food
-
-graph_tp_1_d <-
   ggplot(data_experiment_1_edited,
          aes(x = food, y = total_protein_g, fill = food_time)) +
   geom_violin(width = 0.8, alpha = 0.5, show.legend = FALSE,
@@ -615,8 +564,8 @@ graph_tp_1_d <-
        y = "**TP (mg of total protein / g wet weight)**",
        fill = "**Time**")
 
-graph_tp_1_e <-
-  graph_tp_1_d +
+graph_tp_1_b <-
+  graph_tp_1_a +
   scale_x_discrete(labels = c("Fed", "Starved")) +
   scale_y_continuous(breaks = seq(8, 24, by = 4),
                      limits = c(8, 27)) +
@@ -624,8 +573,8 @@ graph_tp_1_e <-
                                "#FF9999", "#FF0000", "#990000"),
                     labels = c("F12", "F24", "F48", "S12", "S24", "S48"))
 
-graph_tp_1_f <-
-  graph_tp_1_e +
+graph_tp_1_c <-
+  graph_tp_1_b +
   theme_bw() +
   theme(axis.text.x = element_text(colour = "black", size = 10, hjust = 0.5),
         axis.text.y = element_text(colour = "black", size = 10),
@@ -648,44 +597,7 @@ graph_tp_1_f <-
 
 #### GST (Glutationa-S-Transferase) --------------------------------------------
 
-# food by time
-
 graph_gst_1_a <-
-  ggplot(data_experiment_1_edited,
-         aes(x = time, y = GST, fill = food)) +
-  geom_boxplot(outlier.shape = 21, alpha = 0.5, width = 0.2,
-               position = position_dodge(0.75)) +
-  geom_violin(width = 0.8, alpha = 0.25, show.legend = FALSE,
-              position = position_dodge(0.75)) +
-  labs(x = "**Time**", 
-       y = "**GST (nmol / min / mg of TP)**",
-       fill = "**Treatment**")
-
-graph_gst_1_b <-
-  graph_gst_1_a +
-  scale_x_discrete(labels = c("12h", "24h", "48h")) +
-  scale_y_continuous(breaks = seq(50, 250, by = 50),
-                     limits = c(50, 250)) +
-  scale_fill_manual(labels = c("Fed", "Starved"),
-                    values = c("#336699", "#FF0000"))
-
-graph_gst_1_c <-
-  graph_gst_1_b +
-  theme_bw() +
-  theme(axis.text.x = element_text(colour = "black", size = 10, hjust = 0.5),
-        axis.text.y = element_text(colour = "black", size = 10),
-        axis.title.x = element_markdown(size = 12, 
-                       margin = margin(t = 10, r = 20, b = 10, l = 20)),
-        axis.title.y = element_markdown(size = 12, 
-                       margin = margin(t = 10, r = 10, b = 10, l = 10)),
-        legend.position = "none",
-        panel.border = element_rect(linewidth = 1, linetype = "solid"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
-
-# time by food
-
-graph_gst_1_d <-
   ggplot(data_experiment_1_edited,
          aes(x = food, y = GST, fill = food_time)) +
   geom_violin(width = 0.8, alpha = 0.5, show.legend = FALSE,
@@ -696,8 +608,8 @@ graph_gst_1_d <-
        y = "**GST (nmol / min / mg of TP)**",
        fill = "**Time**")
 
-graph_gst_1_e <-
-  graph_gst_1_d +
+graph_gst_1_b <-
+  graph_gst_1_a +
   scale_x_discrete(labels = c("Fed", "Starved")) +
   scale_y_continuous(breaks = seq(50, 250, by = 50),
                      limits = c(50, 250)) +
@@ -705,8 +617,8 @@ graph_gst_1_e <-
                                "#FF9999", "#FF0000", "#990000"),
                     labels = rep(c("12", "24", "48"), 2))
 
-graph_gst_1_f <-
-  graph_gst_1_e +
+graph_gst_1_c <-
+  graph_gst_1_b +
   theme_bw() +
   theme(axis.text.x = element_text(colour = "black", size = 10, hjust = 0.5),
         axis.text.y = element_text(colour = "black", size = 10),
@@ -721,26 +633,25 @@ graph_gst_1_f <-
 
 #### SOD (Superoxide Dismutase) ------------------------------------------------
 
-# food by time
-
 graph_sod_1_a <-
   ggplot(data_experiment_1_edited,
-         aes(x = time, y = SOD, fill = food)) +
-  geom_boxplot(outlier.shape = 21, alpha = 0.5, width = 0.2,
-               position = position_dodge(0.75)) +
-  geom_violin(width = 0.8, alpha = 0.25, show.legend = FALSE,
+         aes(x = food, y = SOD, fill = food_time)) +
+  geom_violin(width = 0.8, alpha = 0.5, show.legend = FALSE,
               position = position_dodge(0.75)) +
-  labs(x = "**Time**", 
+  geom_boxplot(outlier.shape = 21, alpha = 0.75, width = 0.2,
+               position = position_dodge(0.75)) +
+  labs(x = "**Treatment**", 
        y = "**SOD (% inhibition / mg of TP)**",
-       fill = "**Treatment**")
+       fill = "**Time**")
 
 graph_sod_1_b <-
   graph_sod_1_a +
-  scale_x_discrete(labels = c("12h", "24h", "48h")) +
+  scale_x_discrete(labels = c("Fed", "Starved")) +
   scale_y_continuous(breaks = seq(50, 250, by = 50),
                      limits = c(50, 250)) +
-  scale_fill_manual(labels = c("Fed", "Starved"),
-                    values = c("#336699", "#FF0000"))
+  scale_fill_manual(values = c("#9999FF", "#0066FF", "#000099",
+                               "#FF9999", "#FF0000", "#990000"),
+                    labels = rep(c("12", "24", "48"), 2))
 
 graph_sod_1_c <-
   graph_sod_1_b +
@@ -756,65 +667,28 @@ graph_sod_1_c <-
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
-# time by food
+#### CAT (Catalase) ------------------------------------------------------------
 
-graph_sod_1_d <-
-  ggplot(data_experiment_1_edited,
-         aes(x = food, y = SOD, fill = food_time)) +
+graph_cat_1_a <-
+  ggplot(data_experiment_1_edited |> 
+         drop_na(CAT),
+         aes(x = food, y = CAT, fill = food_time)) +
   geom_violin(width = 0.8, alpha = 0.5, show.legend = FALSE,
               position = position_dodge(0.75)) +
   geom_boxplot(outlier.shape = 21, alpha = 0.75, width = 0.2,
                position = position_dodge(0.75)) +
   labs(x = "**Treatment**", 
-       y = "**SOD (% inhibition / mg of TP)**",
-       fill = "**Time**")
-
-graph_sod_1_e <-
-  graph_sod_1_d +
-  scale_x_discrete(labels = c("Fed", "Starved")) +
-  scale_y_continuous(breaks = seq(50, 250, by = 50),
-                     limits = c(50, 250)) +
-  scale_fill_manual(values = c("#9999FF", "#0066FF", "#000099",
-                               "#FF9999", "#FF0000", "#990000"),
-                    labels = rep(c("12", "24", "48"), 2))
-
-graph_sod_1_f <-
-  graph_sod_1_e +
-  theme_bw() +
-  theme(axis.text.x = element_text(colour = "black", size = 10, hjust = 0.5),
-        axis.text.y = element_text(colour = "black", size = 10),
-        axis.title.x = element_markdown(size = 12, 
-                       margin = margin(t = 10, r = 20, b = 10, l = 20)),
-        axis.title.y = element_markdown(size = 12, 
-                       margin = margin(t = 10, r = 10, b = 10, l = 10)),
-        legend.position = "none",
-        panel.border = element_rect(linewidth = 1, linetype = "solid"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
-
-#### CAT (Catalase) ------------------------------------------------------------
-
-# food by time
-
-graph_cat_1_a <-
-  ggplot(data_experiment_1_edited |> 
-           drop_na(CAT),
-         aes(x = time, y = CAT, fill = food)) +
-  geom_boxplot(outlier.shape = 21, alpha = 0.5, width = 0.2,
-               position = position_dodge(0.75)) +
-  geom_violin(width = 0.8, alpha = 0.25, show.legend = FALSE,
-              position = position_dodge(0.75)) +
-  labs(x = "**Time**", 
        y = expression(bold("CAT"~("\u03bc"*M~"/"~"min"~"/"~"mg of TP"))),
-       fill = "**Treatment**")
+       fill = "**Time**")
 
 graph_cat_1_b <-
   graph_cat_1_a +
-  scale_x_discrete(labels = c("12h", "24h", "48h")) +
+  scale_x_discrete(labels = c("Fed", "Starved")) +
   scale_y_continuous(breaks = seq(0, 10, by = 2.5),
                      limits = c(-0.25, 10.25)) +
-  scale_fill_manual(labels = c("Fed", "Starved"),
-                    values = c("#336699", "#FF0000"))
+  scale_fill_manual(values = c("#9999FF", "#0066FF", "#000099",
+                               "#FF9999", "#FF0000", "#990000"),
+                    labels = rep(c("12", "24", "48"), 2))
 
 graph_cat_1_c <-
   graph_cat_1_b +
@@ -830,66 +704,28 @@ graph_cat_1_c <-
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
-# time by food
+#### LPO (Lipid Peroxidation) --------------------------------------------------
 
-graph_cat_1_d <-
+graph_lpo_1_a <-
   ggplot(data_experiment_1_edited |> 
-         drop_na(CAT),
-         aes(x = food, y = CAT, fill = food_time)) +
+         drop_na(LPO),
+         aes(x = food, y = LPO, fill = food_time)) +
   geom_violin(width = 0.8, alpha = 0.5, show.legend = FALSE,
               position = position_dodge(0.75)) +
   geom_boxplot(outlier.shape = 21, alpha = 0.75, width = 0.2,
                position = position_dodge(0.75)) +
   labs(x = "**Treatment**", 
-       y = expression(bold("CAT"~("\u03bc"*M~"/"~"min"~"/"~"mg of TP"))),
-       fill = "**Time**")
-
-graph_cat_1_e <-
-  graph_cat_1_d +
-  scale_x_discrete(labels = c("Fed", "Starved")) +
-  scale_y_continuous(breaks = seq(0, 10, by = 2.5),
-                     limits = c(-0.25, 10.25)) +
-  scale_fill_manual(values = c("#9999FF", "#0066FF", "#000099",
-                               "#FF9999", "#FF0000", "#990000"),
-                    labels = rep(c("12", "24", "48"), 2))
-
-graph_cat_1_f <-
-  graph_cat_1_e +
-  theme_bw() +
-  theme(axis.text.x = element_text(colour = "black", size = 10, hjust = 0.5),
-        axis.text.y = element_text(colour = "black", size = 10),
-        axis.title.x = element_markdown(size = 12, 
-                       margin = margin(t = 10, r = 20, b = 10, l = 20)),
-        axis.title.y = element_text(size = 12,
-                       margin = margin(t = 10, r = 10, b = 10, l = 10)),
-        legend.position = "none",
-        panel.border = element_rect(linewidth = 1, linetype = "solid"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
-
-#### LPO (Lipid Peroxidation) --------------------------------------------------
-
-# food by time
-
-graph_lpo_1_a <-
-  ggplot(data_experiment_1_edited |> 
-         drop_na(LPO),
-         aes(x = time, y = LPO, fill = food)) +
-  geom_boxplot(outlier.shape = 21, alpha = 0.5, width = 0.2,
-               position = position_dodge(0.75)) +
-  geom_violin(width = 0.8, alpha = 0.25, show.legend = FALSE,
-              position = position_dodge(0.75)) +
-  labs(x = "**Time**", 
        y = "**LPO (nmol / mg of TP)**",
-       fill = "**Treatment**")
+       fill = "**Time**")
 
 graph_lpo_1_b <-
   graph_lpo_1_a +
-  scale_x_discrete(labels = c("12h", "24h", "48h")) +
+  scale_x_discrete(labels = c("Fed", "Starved")) +
   scale_y_continuous(breaks = seq(0, 0.08, by = 0.02),
                      limits = c(0, 0.08)) +
-  scale_fill_manual(labels = c("Fed", "Starved"),
-                    values = c("#336699", "#FF0000"))
+  scale_fill_manual(values = c("#9999FF", "#0066FF", "#000099",
+                               "#FF9999", "#FF0000", "#990000"),
+                    labels = rep(c("12", "24", "48"), 2))
 
 graph_lpo_1_c <-
   graph_lpo_1_b +
@@ -905,66 +741,28 @@ graph_lpo_1_c <-
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
-# time by food
+#### TAC (Total Antioxidant Capacity) ------------------------------------------
 
-graph_lpo_1_d <-
+graph_tac_1_a <-
   ggplot(data_experiment_1_edited |> 
-         drop_na(LPO),
-         aes(x = food, y = LPO, fill = food_time)) +
+         drop_na(TAC),
+         aes(x = food, y = TAC, fill = food_time)) +
   geom_violin(width = 0.8, alpha = 0.5, show.legend = FALSE,
               position = position_dodge(0.75)) +
   geom_boxplot(outlier.shape = 21, alpha = 0.75, width = 0.2,
                position = position_dodge(0.75)) +
   labs(x = "**Treatment**", 
-       y = "**LPO (nmol / mg of TP)**",
-       fill = "**Time**")
-
-graph_lpo_1_e <-
-  graph_lpo_1_d +
-  scale_x_discrete(labels = c("Fed", "Starved")) +
-  scale_y_continuous(breaks = seq(0, 0.08, by = 0.02),
-                     limits = c(0, 0.08)) +
-  scale_fill_manual(values = c("#9999FF", "#0066FF", "#000099",
-                               "#FF9999", "#FF0000", "#990000"),
-                    labels = rep(c("12", "24", "48"), 2))
-
-graph_lpo_1_f <-
-  graph_lpo_1_e +
-  theme_bw() +
-  theme(axis.text.x = element_text(colour = "black", size = 10, hjust = 0.5),
-        axis.text.y = element_text(colour = "black", size = 10),
-        axis.title.x = element_markdown(size = 12, 
-                       margin = margin(t = 10, r = 20, b = 10, l = 20)),
-        axis.title.y = element_markdown(size = 12,
-                       margin = margin(t = 10, r = 10, b = 10, l = 10)),
-        legend.position = "none",
-        panel.border = element_rect(linewidth = 1, linetype = "solid"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
-
-#### TAC (Total Antioxidant Capacity) ------------------------------------------
-
-# food by time
-
-graph_tac_1_a <-
-  ggplot(data_experiment_1_edited |> 
-         drop_na(TAC),
-         aes(x = time, y = TAC, fill = food)) +
-  geom_boxplot(outlier.shape = 21, alpha = 0.5, width = 0.2,
-               position = position_dodge(0.75)) +
-  geom_violin(width = 0.8, alpha = 0.25, show.legend = FALSE,
-              position = position_dodge(0.75)) +
-  labs(x = "**Time**", 
        y = "**TAC (mmol / mg of TP)**",
-       fill = "**Treatment**")
+       fill = "**Time**")
 
 graph_tac_1_b <-
   graph_tac_1_a +
-  scale_x_discrete(labels = c("12h", "24h", "48h")) +
+  scale_x_discrete(labels = c("Fed", "Starved")) +
   scale_y_continuous(breaks = seq(0, 0.8, by = 0.2),
                      limits = c(0, 0.8)) +
-  scale_fill_manual(labels = c("Fed", "Starved"),
-                    values = c("#336699", "#FF0000"))
+  scale_fill_manual(values = c("#9999FF", "#0066FF", "#000099",
+                               "#FF9999", "#FF0000", "#990000"),
+                    labels = rep(c("12", "24", "48"), 2))
 
 graph_tac_1_c <-
   graph_tac_1_b +
@@ -980,48 +778,9 @@ graph_tac_1_c <-
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
-# time by food
-
-graph_tac_1_d <-
-  ggplot(data_experiment_1_edited |> 
-         drop_na(TAC),
-         aes(x = food, y = TAC, fill = food_time)) +
-  geom_violin(width = 0.8, alpha = 0.5, show.legend = FALSE,
-              position = position_dodge(0.75)) +
-  geom_boxplot(outlier.shape = 21, alpha = 0.75, width = 0.2,
-               position = position_dodge(0.75)) +
-  labs(x = "**Treatment**", 
-       y = "**TAC (mmol / mg of TP)**",
-       fill = "**Time**")
-
-graph_tac_1_e <-
-  graph_tac_1_d +
-  scale_x_discrete(labels = c("Fed", "Starved")) +
-  scale_y_continuous(breaks = seq(0, 0.8, by = 0.2),
-                     limits = c(0, 0.8)) +
-  scale_fill_manual(values = c("#9999FF", "#0066FF", "#000099",
-                               "#FF9999", "#FF0000", "#990000"),
-                    labels = rep(c("12", "24", "48"), 2))
-
-graph_tac_1_f <-
-  graph_tac_1_e +
-  theme_bw() +
-  theme(axis.text.x = element_text(colour = "black", size = 10, hjust = 0.5),
-        axis.text.y = element_text(colour = "black", size = 10),
-        axis.title.x = element_markdown(size = 12, 
-                       margin = margin(t = 10, r = 20, b = 10, l = 20)),
-        axis.title.y = element_markdown(size = 12,
-                       margin = margin(t = 10, r = 10, b = 10, l = 10)),
-        legend.position = "none",
-        panel.border = element_rect(linewidth = 1, linetype = "solid"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
-
 ### Creating the final figure --------------------------------------------------
 
-# food by time
-
-graph_biomarkers_experiment_1_a <-
+graph_biomarkers_experiment_1 <-
   graph_tp_1_c +
   graph_gst_1_c +
   graph_cat_1_c +
@@ -1033,8 +792,8 @@ graph_biomarkers_experiment_1_a <-
 
 # remove x title and text for plot 1
 
-graph_biomarkers_experiment_1_a[[1]] <-
-  graph_biomarkers_experiment_1_a[[1]] +
+graph_biomarkers_experiment_1[[1]] <-
+  graph_biomarkers_experiment_1[[1]] +
   theme(
     plot.margin = margin(0.5, 0.25, 0.25, 0.5, "cm"),
     axis.title.x = element_blank(),
@@ -1042,8 +801,8 @@ graph_biomarkers_experiment_1_a[[1]] <-
 
 # remove x title and text for plot 2
 
-graph_biomarkers_experiment_1_a[[2]] <-
-  graph_biomarkers_experiment_1_a[[2]] +
+graph_biomarkers_experiment_1[[2]] <-
+  graph_biomarkers_experiment_1[[2]] +
   theme(
     plot.margin = margin(0.5, 0.5, 0, 0, "cm"),
     axis.title.x = element_blank(),
@@ -1051,8 +810,8 @@ graph_biomarkers_experiment_1_a[[2]] <-
 
 # remove x title and text for plot 3
 
-graph_biomarkers_experiment_1_a[[3]] <-
-  graph_biomarkers_experiment_1_a[[3]] +
+graph_biomarkers_experiment_1[[3]] <-
+  graph_biomarkers_experiment_1[[3]] +
   theme(
     plot.margin = margin(0, 0.25, 0.25, 0.5, "cm"),
     axis.title.x = element_blank(),
@@ -1060,8 +819,8 @@ graph_biomarkers_experiment_1_a[[3]] <-
 
 # remove x title and text for plot 4
 
-graph_biomarkers_experiment_1_a[[4]] <-
-  graph_biomarkers_experiment_1_a[[4]] +
+graph_biomarkers_experiment_1[[4]] <-
+  graph_biomarkers_experiment_1[[4]] +
   theme(
     plot.margin = margin(0, 0.5, 0, 0, "cm"),
     axis.title.x = element_blank(),
@@ -1069,84 +828,19 @@ graph_biomarkers_experiment_1_a[[4]] <-
 
 # change margins for plots 5
 
-graph_biomarkers_experiment_1_a[[5]] <-
-  graph_biomarkers_experiment_1_a[[5]] +
+graph_biomarkers_experiment_1[[5]] <-
+  graph_biomarkers_experiment_1[[5]] +
   theme(plot.margin = margin(0, 0.25, 0.25, 0.5, "cm"))
 
 # change margins for plot 6
 
-graph_biomarkers_experiment_1_a[[6]] <-
-  graph_biomarkers_experiment_1_a[[6]] +
-  theme(
-    plot.margin = margin(0, 0.5, 0.5, 0, "cm"))
-
-ggsave("Biomarkers Experiment 1 v1.png",
-       graph_biomarkers_experiment_1_a,
-       height = 25, width = 25, units = "cm", dpi = 600)
-
-# time by food
-
-graph_biomarkers_experiment_1_b <-
-  graph_tp_1_f +
-  graph_gst_1_f +
-  graph_cat_1_f +
-  graph_sod_1_f +
-  graph_lpo_1_f +
-  graph_tac_1_f +
-  plot_layout(ncol = 2) +
-  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")")
-
-# remove x title and text for plot 1
-
-graph_biomarkers_experiment_1_b[[1]] <-
-  graph_biomarkers_experiment_1_b[[1]] +
-  theme(
-    plot.margin = margin(0.5, 0.25, 0.25, 0.5, "cm"),
-    axis.title.x = element_blank(),
-    axis.text.x = element_blank())
-
-# remove x title and text for plot 2
-
-graph_biomarkers_experiment_1_b[[2]] <-
-  graph_biomarkers_experiment_1_b[[2]] +
-  theme(
-    plot.margin = margin(0.5, 0.5, 0, 0, "cm"),
-    axis.title.x = element_blank(),
-    axis.text.x = element_blank())
-
-# remove x title and text for plot 3
-
-graph_biomarkers_experiment_1_b[[3]] <-
-  graph_biomarkers_experiment_1_b[[3]] +
-  theme(
-    plot.margin = margin(0, 0.25, 0.25, 0.5, "cm"),
-    axis.title.x = element_blank(),
-    axis.text.x = element_blank())
-
-# remove x title and text for plot 4
-
-graph_biomarkers_experiment_1_b[[4]] <-
-  graph_biomarkers_experiment_1_b[[4]] +
-  theme(
-    plot.margin = margin(0, 0.5, 0, 0, "cm"),
-    axis.title.x = element_blank(),
-    axis.text.x = element_blank())
-
-# change margins for plots 5
-
-graph_biomarkers_experiment_1_b[[5]] <-
-  graph_biomarkers_experiment_1_b[[5]] +
-  theme(plot.margin = margin(0, 0.25, 0.25, 0.5, "cm"))
-
-# change margins for plot 6
-
-graph_biomarkers_experiment_1_b[[6]] <-
-  graph_biomarkers_experiment_1_b[[6]] +
+graph_biomarkers_experiment_1[[6]] <-
+  graph_biomarkers_experiment_1[[6]] +
   theme(
     plot.margin = margin(0, 0.5, 0.5, 0, "cm"))
 
 ggsave("Figure 3.png",
-       graph_biomarkers_experiment_1_b,
+       graph_biomarkers_experiment_1,
        height = 25, width = 25, units = "cm", dpi = 600)
 
 ### Experiment 2 - Zoea 9 and Postlarvae ---------------------------------------
@@ -1554,6 +1248,6 @@ graph_size_time_c <-
                              override.aes = list(shape = 21)),
          shape = guide_legend(byrow = TRUE, nrow = 1))
 
-ggsave("Size and time.png",
+ggsave("Figure 1.png",
        graph_size_time_c,
        height = 15, width = 20, units = "cm", dpi = 600)
