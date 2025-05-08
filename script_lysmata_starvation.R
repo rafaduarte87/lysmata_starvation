@@ -782,8 +782,8 @@ graph_tac_1_c <-
 
 graph_biomarkers_experiment_1 <-
   graph_tp_1_c +
-  graph_gst_1_c +
   graph_cat_1_c +
+  graph_gst_1_c +
   graph_sod_1_c +
   graph_lpo_1_c +
   graph_tac_1_c +
@@ -1070,8 +1070,8 @@ graph_tac_2_c <-
 
 graph_biomarkers_experiment_2 <-
   graph_tp_2_c +
-  graph_gst_2_c +
   graph_cat_2_c +
+  graph_gst_2_c +
   graph_sod_2_c +
   graph_lpo_2_c +
   graph_tac_2_c +
