@@ -1,4 +1,6 @@
-# Codes and data of the manuscript "Post-hatching starvation increases oxidative stress responses and prolongs larval life in the marine ornamental shrimp *Lysmata seticaudata*" submitted to Aquaculture.
+# Codes and data of the manuscript "Post-hatching starvation increases oxidative stress responses and prolongs larval life in the marine ornamental shrimp *Lysmata seticaudata*" published in Aquaculture.
+
+https://www.sciencedirect.com/science/article/pii/S0044848625006696?via%3Dihub
 
 **Authors**: Rafael Campos Duarte; Daniel Acebes; Diana Madeira; Ruben X. G. Silva; Joana F. Fernandes; Fernando Ricardo; Ricardo Calado
 
